@@ -124,7 +124,7 @@ function hosting_solr_view(&$node) {
     $node->content['info']['solr_path'] = array(
       '#type' => 'item',
       '#title' => t('Solr path'),
-      '#value' => '/solr/'. hosting_solr_suggest_solr_core_name($node->title),
+      '#value' => hosting_solr_suggest_solr_core_name($node->title),
       '#weight' => 23,
     );
   }
