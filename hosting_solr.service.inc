@@ -15,11 +15,11 @@ class hostingService_solr extends hostingService {
  * An implementation of the solr service type, registered with hook_hosting_service.
  */
 
-class hostingService_solr_apollo extends hostingService_solr {
+class hostingService_solr_lucene extends hostingService_solr {
  /**
   * the value stored in the type column of the hosting_service table.
   */
-  public $type = 'apollo';
+  public $type = 'lucene';
 
 
  /**
@@ -31,19 +31,12 @@ class hostingService_solr_apollo extends hostingService_solr {
   * the default value for the port input.
   */
   function default_port() {
-    return 8983;
+    return 8080;
   }
 
  /**
   * this service needs to be restarted with a shell command.
   */
-  public $has_restart_cmd = TRUE;
-
- /**
-  * The default value for the restart command input.
-  */
-  function default_restart_cmd() {
-    return "sudo /etc/init.d/apollo restart";
-  }
+  public $has_restart_cmd = FALSE;
 }
 

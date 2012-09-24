@@ -35,7 +35,6 @@ function hosting_solr_install() {
 }
 
 function hosting_solr_uninstall() {
-  //db_query("DELETE FROM {hosting_service} WHERE service='solr');
   drupal_uninstall_schema('hosting_solr');
 }
 
