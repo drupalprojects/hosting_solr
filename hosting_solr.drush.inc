@@ -3,6 +3,7 @@
 function hosting_solr_hosting_site_context_options(&$task) {
   if (isset($task->ref->solr)) {
     $task->context_options['solr'] = $task->ref->solr;
+    $task->context_options['solr_server'] = hosting_context_name($task->ref->solr_server);
   }
 }
 

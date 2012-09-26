@@ -10,7 +10,6 @@ class hostingService_solr extends hostingService {
   public $service = 'solr';
 }
 
-
 /**
  * An implementation of the solr service type, registered with hook_hosting_service.
  */

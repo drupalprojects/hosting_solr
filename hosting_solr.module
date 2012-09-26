@@ -9,6 +9,8 @@
  * and backend.
  */
 
+define ('HOSTING_DEFAULT_SOLR_SERVER', 4);
+
 /**
  * @defgroup hostingserviceapi Frontend Service API
  * @{
@@ -84,12 +86,25 @@ function hosting_solr_hosting_service() {
  */
 function hosting_solr_form_alter(&$form, $form_state, $form_id) {
   if ($form_id == 'site_node_form') {
+    $node = $form['#node'];
+
     $form['solr'] = array(
       '#type' => 'checkbox',
       '#title' => t('Provision solr for this site'),
       '#default_value' => isset($form['#node']->solr) ? $form['#node']->solr : FALSE,
       '#weight' => 14,
     );
+
+    //Add selection server
+    _hosting_site_field($form, $node, 'solr_server', array(
+      '#type' => 'radios',
+      '#title' => t('Solr server'),
+      '#required' => TRUE,
+      '#description' => t('The solr server the site will use to host its content.'),
+      '#options' => hosting_get_servers('solr'),
+      '#default_value' => $node->solr_server ? $node->solr_server : HOSTING_DEFAULT_SOLR_SERVER,
+    ), '_hosting_node_link');
+
     return $form;
   }
 }
@@ -99,7 +114,7 @@ function hosting_solr_form_alter(&$form, $form_state, $form_id) {
 */ 
 function hosting_solr_suggest_solr_core_name($uri) {
 
-  $suggest_base = 'aegir-' . substr(str_replace(array('.', '-'), '' , preg_replace('/^www\./', '', $uri)), 0);
+  $suggest_base = $uri;
 
   return $suggest_base;
 }
@@ -135,7 +150,7 @@ function hosting_solr_view(&$node) {
  */
 function hosting_solr_insert($node) {
   if ($node->solr) {
-    db_query("INSERT INTO {hosting_solr} (vid, nid, solr) VALUES (%d, %d, %d)", $node->vid, $node->nid, $node->solr);
+    db_query("INSERT INTO {hosting_solr} (vid, nid, solr, server) VALUES (%d, %d, %d, %d)", $node->vid, $node->nid, $node->solr, $node->solr_server);
   }
 }
 
@@ -143,7 +158,7 @@ function hosting_solr_insert($node) {
  * Function for operation nodeapi update
  */
 function hosting_solr_update($node) {
-  db_query("UPDATE {hosting_solr} SET solr = %d WHERE nid = %d", $node->solr, $node->nid);
+  db_query("UPDATE {hosting_solr} SET solr = %d AND server=%d WHERE nid = %d", $node->solr, $node->solr_server, $node->nid);
 }
 
 /**
@@ -193,7 +208,7 @@ function hosting_solr_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       case 'validate' :
         break;
       case 'load':
-        $additions['solr'] = db_result(db_query("SELECT solr FROM {hosting_solr} WHERE vid=%d LIMIT 1", $node->vid));
+        $additions = db_fetch_array(db_query("SELECT solr, server AS solr_server FROM {hosting_solr} WHERE vid=%d LIMIT 1", $node->vid));
         return $additions;
         break;
     }
