@@ -124,10 +124,12 @@ function hosting_solr_suggest_solr_core_name($uri) {
  */
 function hosting_solr_view(&$node) {
   if ($node->solr) {
+    $server = node_load($node->solr_server);
+
     $node->content['info']['solr_hostname'] = array(
       '#type' => 'item',
       '#title' => t('Solr hostname'),
-      '#value' => 'localhost',
+      '#value' => $server->title,
       '#weight' => 22,
     );
     $node->content['info']['solr_port'] = array(
