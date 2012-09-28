@@ -17,11 +17,11 @@ function hosting_solr_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      server' => array(
+      'server' => array(
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
-      ),
+      )
     ),
     'primary key' => array('vid', 'nid'),
   );
