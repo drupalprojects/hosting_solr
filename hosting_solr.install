@@ -17,13 +17,7 @@ function hosting_solr_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'solr' => array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-      'server' => array(
+      server' => array(
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,

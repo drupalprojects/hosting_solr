@@ -116,26 +116,16 @@ function hosting_solr_suggest_solr_core_name($uri) {
  * Function for operation nodeapi view
  */
 function hosting_solr_view(&$node) {
-  if ($node->solr) {
+  if ($node->solr_server) {
     $server = node_load($node->solr_server);
+
+   $link = 'http://'. $server->title .':8080/'. hosting_solr_suggest_solr_core_name($node->title);
 
     $node->content['info']['solr_hostname'] = array(
       '#type' => 'item',
-      '#title' => t('Solr hostname'),
-      '#value' => $server->title,
+      '#title' => t('Solr URL'),
+      '#value' => l($link, $link),
       '#weight' => 22,
-    );
-    $node->content['info']['solr_port'] = array(
-      '#type' => 'item',
-      '#title' => t('Solr port'),
-      '#value' => '8080',
-      '#weight' => 22,
-    );
-    $node->content['info']['solr_path'] = array(
-      '#type' => 'item',
-      '#title' => t('Solr path'),
-      '#value' => hosting_solr_suggest_solr_core_name($node->title),
-      '#weight' => 23,
     );
   }
 }
@@ -144,8 +134,8 @@ function hosting_solr_view(&$node) {
  * Function for operation nodeapi insert
  */
 function hosting_solr_insert($node) {
-  if ($node->solr) {
-    db_query("INSERT INTO {hosting_solr} (vid, nid, solr, server) VALUES (%d, %d, %d, %d)", $node->vid, $node->nid, $node->solr_server, $node->solr_server);
+  if ($node->solr_server) {
+    db_query("INSERT INTO {hosting_solr} (vid, nid, server) VALUES (%d, %d, %d)", $node->vid, $node->nid, $node->solr_server);
   }
 }
 
@@ -153,7 +143,7 @@ function hosting_solr_insert($node) {
  * Function for operation nodeapi update
  */
 function hosting_solr_update($node) {
-  db_query("UPDATE {hosting_solr} SET solr = %d AND server=%d WHERE nid = %d", $node->solr_server, $node->solr_server, $node->nid);
+  db_query("UPDATE {hosting_solr} SET server=%d WHERE nid = %d", $node->solr_server, $node->nid);
 }
 
 /**
@@ -185,14 +175,13 @@ function hosting_solr_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       case 'update':
         // if there is already an entry, update it. If the solr module has been activate later on and the site
         // has already existing, this special case needs to be tracked.
-        if (!db_result(db_query("SELECT vid FROM {hosting_solr} WHERE vid=%d", $node->vid))) {
+        if (!db_result(db_query("SELECT server FROM {hosting_solr} WHERE vid=%d", $node->vid))) {
           hosting_solr_insert($node);
         }
         else {
           // otherwise create it
           hosting_solr_update($node);
         }
-        hosting_solr_update($node);
         break;
       case 'delete' :
         hosting_solr_delete($node);
