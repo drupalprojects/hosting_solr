@@ -9,7 +9,7 @@
  * and backend.
  */
 
-define ('HOSTING_DEFAULT_SOLR_SERVER', 4);
+define ('HOSTING_DEFAULT_SOLR_SERVER', 2);
 
 /**
  * @defgroup hostingserviceapi Frontend Service API
@@ -192,12 +192,12 @@ function hosting_solr_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       case 'update':
         // if there is already an entry, update it. If the solr module has been activate later on and the site
         // has already existing, this special case needs to be tracked.
-        if(db_result(db_query("SELECT count(vid) as C FROM {hosting_solr} WHERE vid=%d", $node->vid)) > 0) {
-          hosting_solr_update($node);
+        if (!db_result(db_query("SELECT vid FROM {hosting_solr} WHERE vid=%d", $node->vid))) {
+          hosting_solr_insert($node);
         }
         else {
           // otherwise create it
-          hosting_solr_insert($node);
+          hosting_solr_update($node);
         }
         hosting_solr_update($node);
         break;
@@ -210,7 +210,7 @@ function hosting_solr_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       case 'validate' :
         break;
       case 'load':
-        $additions = db_fetch_array(db_query("SELECT solr, server AS solr_server FROM {hosting_solr} WHERE vid=%d LIMIT 1", $node->vid));
+        $additions = db_fetch_array(db_query("SELECT solr, server AS solr_server FROM {hosting_solr} WHERE vid=%d  ORDER BY solr_server DESC LIMIT 1", $node->vid));
         return $additions;
         break;
     }
