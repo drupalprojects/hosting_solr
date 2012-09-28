@@ -88,22 +88,15 @@ function hosting_solr_form_alter(&$form, $form_state, $form_id) {
   if ($form_id == 'site_node_form') {
     $node = $form['#node'];
 
-    $form['solr'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Provision solr for this site'),
-      '#default_value' => isset($form['#node']->solr) ? $form['#node']->solr : FALSE,
-      '#weight' => 14,
-    );
-
     //Add selection server
-    _hosting_site_field($form, $node, 'solr_server', array(
+    $form['solr_server'] =  array(
       '#type' => 'radios',
       '#title' => t('Solr server'),
       '#required' => TRUE,
       '#description' => t('The solr server the site will use to host its content.'),
-      '#options' => hosting_get_servers('solr'),
+      '#options' => array('None') + hosting_get_servers('solr'),
       '#default_value' => $node->solr_server ? $node->solr_server : HOSTING_DEFAULT_SOLR_SERVER,
-    ), '_hosting_node_link');
+    );
 
     return $form;
   }
@@ -152,7 +145,7 @@ function hosting_solr_view(&$node) {
  */
 function hosting_solr_insert($node) {
   if ($node->solr) {
-    db_query("INSERT INTO {hosting_solr} (vid, nid, solr, server) VALUES (%d, %d, %d, %d)", $node->vid, $node->nid, $node->solr, $node->solr_server);
+    db_query("INSERT INTO {hosting_solr} (vid, nid, solr, server) VALUES (%d, %d, %d, %d)", $node->vid, $node->nid, $node->solr_server, $node->solr_server);
   }
 }
 
@@ -160,7 +153,7 @@ function hosting_solr_insert($node) {
  * Function for operation nodeapi update
  */
 function hosting_solr_update($node) {
-  db_query("UPDATE {hosting_solr} SET solr = %d AND server=%d WHERE nid = %d", $node->solr, $node->solr_server, $node->nid);
+  db_query("UPDATE {hosting_solr} SET solr = %d AND server=%d WHERE nid = %d", $node->solr_server, $node->solr_server, $node->nid);
 }
 
 /**
