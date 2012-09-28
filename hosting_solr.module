@@ -9,7 +9,7 @@
  * and backend.
  */
 
-define ('HOSTING_DEFAULT_SOLR_SERVER', 2);
+define ('HOSTING_DEFAULT_SOLR_SERVER', 0);
 
 /**
  * @defgroup hostingserviceapi Frontend Service API
