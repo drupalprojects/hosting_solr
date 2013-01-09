@@ -192,7 +192,7 @@ function hosting_solr_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       case 'validate' :
         break;
       case 'load':
-        $additions = db_fetch_array(db_query("SELECT solr, server AS solr_server FROM {hosting_solr} WHERE vid=%d  ORDER BY solr_server DESC LIMIT 1", $node->vid));
+        $additions = db_fetch_array(db_query("SELECT server AS solr_server FROM {hosting_solr} WHERE vid=%d  ORDER BY solr_server DESC LIMIT 1", $node->vid));
         return $additions;
         break;
     }
