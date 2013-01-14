@@ -29,12 +29,27 @@ function hosting_solr_schema() {
   return $schema;
 }
 
+/**
+ * Implementation of hook_install().
+ */
 function hosting_solr_install() {
   drupal_install_schema('hosting_solr');
 }
 
+/**
+ * Implementation of hook_uninstall().
+ */
 function hosting_solr_uninstall() {
   drupal_uninstall_schema('hosting_solr');
 }
 
+/**
+ * Implementation of hook_update_N().
+ */
+function hosting_solr_update_6001() {
+  //New field for new functionality. Issue #1864124
 
+  $ret = array();
+  db_add_field($ret, 'hosting_solr', 'path', array('type' => 'varchar', 'length' => '255', 'default' => ''));
+  return $ret;
+}

@@ -4,6 +4,7 @@ function hosting_solr_hosting_site_context_options(&$task) {
   if (isset($task->ref->solr_server)) {
     $task->context_options['solr'] = $task->ref->solr_server;
     $task->context_options['solr_server'] = hosting_context_name($task->ref->solr_server);
+    $task->context_options['solr_path'] = $task->ref->solr_path;
   }
 }
 
@@ -17,6 +18,7 @@ function hosting_solr_drush_context_import($context, &$node) {
     if (isset($context->solr_server)) {
       $node->solr = $context->solr_server;
       $node->solr_server = $context->solr_server;
+      $node->solr_path = $context->solr_path;
     }
   }
 }
