@@ -102,7 +102,7 @@ function hosting_solr_form_alter(&$form, $form_state, $form_id) {
     $form['solr_path'] = array(
       '#type' => 'textfield',
       '#title' => t('Solr path'),
-      '#description' => t('Select a specific path for copy schema.xml and solrconfig.xml. If is empty then is used default schema.xml and solrconfig.xml'),
+      '#description' => t('Select a specific path for copy custom settings for solr (chema.xml,solrconfig.xml, ..). If is empty then is used default setting'),
       '#default_value' => $node->solr_path ? $node->solr_path : HOSTING_DEFAULT_SOLR_PATH,
     );
 
