@@ -21,7 +21,12 @@ function hosting_solr_schema() {
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
-      )
+      ),
+      'path' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'default' => '',
+      ),
     ),
     'primary key' => array('vid', 'nid'),
   );
