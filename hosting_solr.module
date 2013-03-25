@@ -101,12 +101,37 @@ function hosting_solr_form_alter(&$form, $form_state, $form_id) {
 
     $form['solr_path'] = array(
       '#type' => 'textfield',
-      '#title' => t('Solr path'),
-      '#description' => t('Select a specific path for copy custom settings for solr (chema.xml,solrconfig.xml, ..). If is empty then is used default setting'),
+      '#title' => t('Path to solr config files'),
+      '#description' => t('Enter the path to the folder containing solr configuration files for this site (relative to the Drupal root).  At least solrconfig.xml and schema.xml must exist in this folder, but all files will be copied to this site\'s SOLR_HOME/conf folder. <em>eg. sites/all/modules/apachesolr/solr-conf/solr-3.x</em>'),
       '#default_value' => $node->solr_path ? $node->solr_path : HOSTING_DEFAULT_SOLR_PATH,
     );
-
+    array_push($form['#validate'], 'hosting_solr_form_validate');
     return $form;
+  }
+}
+
+/**
+ * Form validation for site nodes: Check for solr config files.
+ */
+function hosting_solr_form_validate($form, &$form_state){
+  if ($form_state['values']['solr_server']){
+    
+    $platform = node_load($form['#node']->platform);
+    $path_to_platform = $platform->publish_path;
+    
+    $path_to_schema = $path_to_platform . "/" . $form_state['values']['solr_path'] . '/schema.xml';
+    $path_to_config = $path_to_platform . "/" . $form_state['values']['solr_path'] . '/solrconfig.xml';
+    
+    if (empty($form_state['values']['solr_path'])){
+      form_set_error('solr_path', t('You must enter a path to your solr config files if you enabled a solr server.'));
+    }
+    elseif (!file_exists($path_to_schema) && !file_exists($path_to_config)){
+      form_set_error('solr_path', t('schema.xml and solrconfig.xml were not found at %path.  Please make sure schema.xml and solrconfig.xml exist in this folder.', array('%path' => $form_state['values']['solr_path'])));
+    } elseif (!file_exists($path_to_schema)){
+      form_set_error('solr_path', t('schema.xml was not found at %path.  Please make sure schema.xml exists in this folder.', array('%path' => $form_state['values']['solr_path'])));
+    } elseif (!file_exists($path_to_config)){
+      form_set_error('solr_path', t('solrconfig.xml was not found at %path.  Please make sure solrconfig.xml exists in this folder.', array('%path' => $form_state['values']['solr_path'])));
+    }
   }
 }
 
