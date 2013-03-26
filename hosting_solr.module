@@ -160,6 +160,14 @@ function hosting_solr_view(&$node) {
       '#value' => l($link, $link),
       '#weight' => 22,
     );
+    $node->content['info']['solr_server'] = array(
+      '#type' => 'item',
+      '#title' => t('Solr server'),
+      '#value' => _hosting_node_link($node->solr_server),
+    );
+    
+    $node->content['info']['db_server']['#weight'] = -2;
+    $node->content['info']['solr_server']['#weight'] = -1;
   }
 }
 
