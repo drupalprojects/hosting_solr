@@ -115,8 +115,8 @@ function hosting_solr_form_alter(&$form, $form_state, $form_id) {
  */
 function hosting_solr_form_validate($form, &$form_state){
   if ($form_state['values']['solr_server']){
-    
-    $platform = node_load($form['#node']->platform);
+    $platform_nid = $form['#node']->platform ? $form['#node']->platform : $form_state['values']['platform'];
+    $platform = node_load($platform_nid);
     $path_to_platform = $platform->publish_path;
     
     $path_to_schema = $path_to_platform . "/" . $form_state['values']['solr_path'] . '/schema.xml';
