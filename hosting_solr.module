@@ -49,7 +49,7 @@ define ('HOSTING_DEFAULT_SOLR_PATH', '');
 function hosting_solr_hosting_service_type() {
   return array(
     'solr' => array(       // Machine name
-      'title' => t('Solr service'), // Human-readable name
+      'title' => t('Solr'), // Human-readable name
       'weight' => 0,       // Optional, defaults to 0
     ),
   );
@@ -75,7 +75,7 @@ function hosting_solr_hosting_service_type() {
  * @see hosting_server_services()
  */
 function hosting_solr_hosting_service() {
-  return array('lucene' => 'solr');   // Service implementation => service type.
+  return array('tomcat' => 'solr');   // Service implementation => service type.
 }
 
 /**
