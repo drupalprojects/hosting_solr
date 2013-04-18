@@ -240,3 +240,11 @@ function hosting_solr_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   }
 }
 
+
+/** 
+ * Implementation of hook_nodeapi()
+ */
+function hosting_solr_nodeapi_server_load(&$node){
+  // @TODO: Store this in the database per server.
+  return array('solr_war_path' => variable_get('hosting_solr_default_solr_war_path', '/usr/share/solr-3.6.2.war'));
+}
