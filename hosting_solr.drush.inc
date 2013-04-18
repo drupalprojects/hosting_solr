@@ -3,24 +3,25 @@
 /**
  * Implements hook_hosting_ENTITYTYPE_context_options() for sites.
  *
- * $task->context_options get passed to provision_solr as drush options.
+ * $task->context_options get passed to provision_solr as drush options,
+ * BUT ONLY if you setProperty in subscribe_site!
  */
 function hosting_solr_hosting_site_context_options(&$task) {
   if (isset($task->ref->solr_server)) {
     $task->context_options['solr_server'] = hosting_context_name($task->ref->solr_server);
     $task->context_options['solr_config_path'] = $task->ref->solr_config_path;
+    $task->context_options['solr_war_path'] = $task->ref->solr_war_path;
   }
 }
 
-
-
 /**
- * Implements hook_hosting_ENTITYTYPE_context_options() for servers.
+ * Implements hook_hosting_ENTITYTYPE_context_options() for sites.
  *
- * $task->context_options get passed to provision_solr as drush options.
+ * $task->context_options get passed to provision_solr as drush options,
+ * BUT ONLY if you setProperty in subscribe_site!
  */
 function hosting_solr_hosting_server_context_options(&$task) {
-  if (isset($task->ref->services['solr']->available)) {
+  if (isset($task->ref->solr_war_path)) {
     $task->context_options['solr_war_path'] = $task->ref->solr_war_path;
   }
 }
