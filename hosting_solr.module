@@ -114,7 +114,7 @@ function hosting_solr_form_alter(&$form, $form_state, $form_id) {
  * Form validation for site nodes: Check for solr config files.
  */
 function hosting_solr_form_validate($form, &$form_state){
-  if ($form_state['values']['solr_server']){
+  if ($form_state['values']['solr_server']) {
     $platform_nid = $form['#node']->platform ? $form['#node']->platform : $form_state['values']['platform'];
     $platform = node_load($platform_nid);
     $path_to_platform = $platform->publish_path;
@@ -241,13 +241,33 @@ function hosting_solr_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         break;
     }
   }
+  elseif ($node->type == 'server' && isset($node->services['solr'])) {
+    switch ($op) {
+      case 'insert':
+      case 'update':
+        $data = new stdClass();
+        $data->server = $node->nid;
+        $data->solr_war_path = $node->services['solr']->solr_war_path;
+        if (db_result(db_query("SELECT serve FROM {hosting_solr_server} WHERE server=%d", $node->nid))) {
+          drupal_write_record('hosting_solr_server', $data, array('server'));
+        }
+        else {
+          drupal_write_record('hosting_solr_server', $data);
+        }
+        break;
+      case 'delete':
+        db_query("DELETE FROM {hosting_solr_server} WHERE server=%d", $node->nid);
+        break;
+    }
+  }
 }
-
 
 /** 
  * Implementation of hook_nodeapi()
  */
-function hosting_solr_nodeapi_server_load(&$node){
-  // @TODO: Store this in the database per server.
-  return array('solr_war_path' => variable_get('hosting_solr_default_solr_war_path', '/usr/share/solr-3.6.2.war'));
+function hosting_solr_nodeapi_server_load(&$node) {
+  $path = db_result(db_query("SELECT solr_war_path FROM {hosting_solr_server} WHERE server=%d", $node->nid));
+  $default_path = variable_get('hosting_solr_default_solr_war_path', '/usr/share/solr-3.6.2.war');
+  $path = $path ? $path : $default_path;
+  return array('solr_war_path' => $path);
 }

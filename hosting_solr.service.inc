@@ -27,6 +27,18 @@ class hostingService_solr_public extends hostingService_solr {
   public function context_options($task_type, $ref_type, &$task) {
     parent::context_options($task_type, $ref_type, $task);
   }
+
+  function form(&$form) {
+    parent::form($form);
+    $server = node_load($this->server->nid);
+
+    $form['solr_war_path'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Path to solr.war'),
+      '#description' => t('Enter the absolute path to the solr.war file you would like to use. This file can be located in any folder on the system.'),
+      '#default_value' => $server->solr_war_path,
+    );
+  }
 }
 
 /**
