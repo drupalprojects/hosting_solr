@@ -248,7 +248,7 @@ function hosting_solr_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         $data = new stdClass();
         $data->server = $node->nid;
         $data->solr_war_path = $node->services['solr']->solr_war_path;
-        if (db_result(db_query("SELECT serve FROM {hosting_solr_server} WHERE server=%d", $node->nid))) {
+        if (db_result(db_query("SELECT server FROM {hosting_solr_server} WHERE server=%d", $node->nid))) {
           drupal_write_record('hosting_solr_server', $data, array('server'));
         }
         else {
