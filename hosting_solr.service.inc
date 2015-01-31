@@ -45,7 +45,7 @@ class hostingService_solr_public extends hostingService_solr {
     $solr_war_path = $node->services['solr']->solr_war_path;
     if ($solr_war_path && !file_exists($solr_war_path)) {
       form_error($form['services']['solr']['tomcat']['solr_war_path'],
-        t('%s is not found. Check that the file is in place and has the right permissions.',
+        t('%s was not found. Check that the file is in place and has the right permissions.',
           array('%s' => $solr_war_path)
         )
       );
