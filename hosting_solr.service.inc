@@ -37,8 +37,21 @@ class hostingService_solr_public extends hostingService_solr {
       '#title' => t('Path to solr.war'),
       '#description' => t('Enter the absolute path to the solr.war file you would like to use. This file can be located in any folder on the system.'),
       '#default_value' => $server->solr_war_path,
+      '#required' => TRUE,
     );
   }
+
+  function validate(&$node, &$form) {
+    $solr_war_path = $node->services['solr']->solr_war_path;
+    if ($solr_war_path && !file_exists($solr_war_path)) {
+      form_error($form['services']['solr']['tomcat']['solr_war_path'],
+        t('%s is not found. Check that the file is in place and has the right permissions.',
+          array('%s' => $solr_war_path)
+        )
+      );
+    }
+  }
+
 }
 
 /**
