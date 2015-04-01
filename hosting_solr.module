@@ -9,6 +9,7 @@
  * and backend.
  */
 
+
 define ('HOSTING_DEFAULT_SOLR_SERVER', 0);
 define ('HOSTING_DEFAULT_SOLR_PATH', '');
 
@@ -49,7 +50,7 @@ define ('HOSTING_DEFAULT_SOLR_PATH', '');
 function hosting_solr_hosting_service_type() {
   return array(
     'solr' => array(       // Machine name
-      'title' => t('Solr'), // Human-readable name
+      'title' => t('Aegir Solr'), // Human-readable name
       'weight' => 0,       // Optional, defaults to 0
     ),
   );
