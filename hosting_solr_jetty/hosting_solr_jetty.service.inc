@@ -10,7 +10,7 @@ class hostingService_solr_jetty extends hostingService_solr_public {
   public $type = 'jetty';
 
   function default_port() {
-    return 8696;
+    return 8983;
   }
   /**
    * this service needs to be restarted with a shell command.
