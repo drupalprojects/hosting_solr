@@ -217,7 +217,8 @@ function hosting_solr_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       case 'update':
         // if there is already an entry, update it. If the solr module has been activate later on and the site
         // has already existing, this special case needs to be tracked.
-        if (!db_result(db_query("SELECT server FROM {hosting_solr} WHERE vid=%d", $node->vid))) {
+        $i = db_result(db_query("SELECT server FROM {hosting_solr} WHERE vid=%d", $node->vid));
+        if ($i) {
           hosting_solr_insert($node);
         }
         else {
