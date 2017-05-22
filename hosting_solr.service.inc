@@ -4,9 +4,9 @@
  * The base service type class , registered with hook_hosting_service_type.
  */
 class hostingService_solr extends hostingService {
- /**
-  * the value stored in the service column of hosting_service table.
-  */
+  /**
+   * the value stored in the service column of hosting_service table.
+   */
   public $service = 'solr';
 }
 
@@ -19,7 +19,7 @@ class hostingService_solr_public extends hostingService_solr {
   function update() {
     parent::update();
   }
-  
+
   public function context_options($task_type, $ref_type, &$task) {
     parent::context_options($task_type, $ref_type, $task);
   }
@@ -29,18 +29,18 @@ class hostingService_solr_public extends hostingService_solr {
  * An implementation of the solr service type, registered with hook_hosting_service.
  */
 class hostingService_solr_tomcat extends hostingService_solr_public {
- /**
-  * the value stored in the type column of the hosting_service table.
-  */
+  /**
+   * the value stored in the type column of the hosting_service table.
+   */
   public $type = 'tomcat';
 
   function default_port() {
     return 8080;
   }
 
- /**
-  * this service needs to be restarted with a shell command.
-  */
+  /**
+   * this service needs to be restarted with a shell command.
+   */
   protected $has_restart_cmd = TRUE;
 
   function default_restart_cmd() {

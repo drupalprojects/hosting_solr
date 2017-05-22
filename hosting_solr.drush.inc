@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Implements hook_hosting_ENTITYTYPE_context_options() for sites.
+ * Implements hook_hosting_ENTITYTYPE_context_options() for sites().
  *
  * $task->context_options get passed to provision_solr as drush options,
  * BUT ONLY if you setProperty in subscribe_site!
@@ -15,7 +15,7 @@ function hosting_solr_hosting_site_context_options(&$task) {
 }
 
 /**
- * Implements hook_hosting_ENTITYTYPE_context_options() for sites.
+ * Implements hook_hosting_ENTITYTYPE_context_options() for sites().
  *
  * $task->context_options get passed to provision_solr as drush options,
  * BUT ONLY if you setProperty in subscribe_site!
@@ -27,7 +27,7 @@ function hosting_solr_hosting_server_context_options(&$task) {
 }
 
 /**
- * Implementation of hook_drush_context_import().
+ * Implements hook_drush_context_import().
  */
 function hosting_solr_drush_context_import($context, &$node) {
   if ($context->type == 'site') {

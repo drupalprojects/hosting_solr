@@ -5,13 +5,13 @@
  * Solr of the Hosting Services API.
  *
  * Aegir introduces an object representation of the provisioned
- * services that need to be implemented in both it's front end 
+ * services that need to be implemented in both it's front end
  * and backend.
  */
 
 
-define ('HOSTING_DEFAULT_SOLR_SERVER', 0);
-define ('HOSTING_DEFAULT_SOLR_PATH', '');
+define('HOSTING_DEFAULT_SOLR_SERVER', 0);
+define('HOSTING_DEFAULT_SOLR_PATH', '');
 
 /**
  * @defgroup hostingserviceapi Frontend Service API
@@ -49,9 +49,9 @@ define ('HOSTING_DEFAULT_SOLR_PATH', '');
  */
 function hosting_solr_hosting_service_type() {
   return array(
-    'solr' => array(       // Machine name
+    'solr' => array(// Machine name
       'title' => t('Aegir Solr'), // Human-readable name
-      'weight' => 0,       // Optional, defaults to 0
+      'weight' => 0, // Optional, defaults to 0
     ),
   );
 }
@@ -76,7 +76,7 @@ function hosting_solr_hosting_service_type() {
  * @see hosting_server_services()
  */
 function hosting_solr_hosting_service() {
-  return array('tomcat' => 'solr');   // Service implementation => service type.
+  return array('tomcat' => 'solr'); // Service implementation => service type.
 }
 
 /**
@@ -84,7 +84,7 @@ function hosting_solr_hosting_service() {
  */
 
 /**
- * Implementation of hook_form_alter()
+ * Implements hook_form_alter().
  */
 function hosting_solr_form_alter(&$form, $form_state, $form_id) {
   if ($form_id == 'site_node_form') {
@@ -114,23 +114,25 @@ function hosting_solr_form_alter(&$form, $form_state, $form_id) {
 /**
  * Form validation for site nodes: Check for solr config files.
  */
-function hosting_solr_form_validate($form, &$form_state){
+function hosting_solr_form_validate($form, &$form_state) {
   if ($form_state['values']['solr_server']) {
     $platform_nid = $form['#node']->platform ? $form['#node']->platform : $form_state['values']['platform'];
     $platform = node_load($platform_nid);
     $path_to_platform = $platform->publish_path;
-    
+
     $path_to_schema = $path_to_platform . "/" . $form_state['values']['solr_config_path'] . '/schema.xml';
     $path_to_config = $path_to_platform . "/" . $form_state['values']['solr_config_path'] . '/solrconfig.xml';
-    
-    if (empty($form_state['values']['solr_config_path'])){
+
+    if (empty($form_state['values']['solr_config_path'])) {
       form_set_error('solr_config_path', t('You must enter a path to your solr config files if you enabled a solr server.'));
     }
-    elseif (!file_exists($path_to_schema) && !file_exists($path_to_config)){
+    elseif (!file_exists($path_to_schema) && !file_exists($path_to_config)) {
       form_set_error('solr_config_path', t('schema.xml and solrconfig.xml were not found at %path.  Please make sure schema.xml and solrconfig.xml exist in this folder.', array('%path' => $form_state['values']['solr_config_path'])));
-    } elseif (!file_exists($path_to_schema)){
+    }
+    elseif (!file_exists($path_to_schema)) {
       form_set_error('solr_config_path', t('schema.xml was not found at %path.  Please make sure schema.xml exists in this folder.', array('%path' => $form_state['values']['solr_config_path'])));
-    } elseif (!file_exists($path_to_config)){
+    }
+    elseif (!file_exists($path_to_config)) {
       form_set_error('solr_config_path', t('solrconfig.xml was not found at %path.  Please make sure solrconfig.xml exists in this folder.', array('%path' => $form_state['values']['solr_config_path'])));
     }
   }
@@ -138,7 +140,7 @@ function hosting_solr_form_validate($form, &$form_state){
 
 /**
  * Clean title for use with solr
-*/ 
+ */
 function hosting_solr_suggest_solr_core_name($uri) {
 
   $suggest_base = $uri;
@@ -153,7 +155,7 @@ function hosting_solr_view(&$node) {
   if ($node->solr_server) {
     $server = node_load($node->solr_server);
 
-   $link = 'http://'. $server->title .':8080/'. hosting_solr_suggest_solr_core_name($node->title);
+    $link = 'http://' . $server->title . ':8080/' . hosting_solr_suggest_solr_core_name($node->title);
 
     $node->content['info']['solr_hostname'] = array(
       '#type' => 'item',
@@ -166,18 +168,27 @@ function hosting_solr_view(&$node) {
       '#title' => t('Solr server'),
       '#value' => _hosting_node_link($node->solr_server),
     );
-    
+
     $node->content['info']['db_server']['#weight'] = -2;
     $node->content['info']['solr_server']['#weight'] = -1;
   }
 }
 
-/** 
+/**
  * Function for operation nodeapi insert
  */
 function hosting_solr_insert($node) {
   if ($node->solr_server) {
-    db_query("INSERT INTO {hosting_solr} (vid, nid, server, path) VALUES (%d, %d, %d, '%s')", $node->vid, $node->nid, $node->solr_server, $node->solr_config_path);
+    // TODO Please review the conversion of this statement to the D7 database API syntax.
+    /* db_query("INSERT INTO {hosting_solr} (vid, nid, server, path) VALUES (%d, %d, %d, '%s')", $node->vid, $node->nid, $node->solr_server, $node->solr_config_path) */
+    $id = db_insert('hosting_solr')
+  ->fields(array(
+      'vid' => $node->vid,
+      'nid' => $node->nid,
+      'server' => $node->solr_server,
+      'path' => $node->solr_config_path,
+    ))
+  ->execute();
   }
 }
 
@@ -185,39 +196,56 @@ function hosting_solr_insert($node) {
  * Function for operation nodeapi update
  */
 function hosting_solr_update($node) {
-  db_query("UPDATE {hosting_solr} SET server=%d, path='%s' WHERE nid = %d", $node->solr_server, $node->solr_config_path, $node->nid);
+  // TODO Please review the conversion of this statement to the D7 database API syntax.
+  /* db_query("UPDATE {hosting_solr} SET server=%d, path='%s' WHERE nid = %d", $node->solr_server, $node->solr_config_path, $node->nid) */
+  db_update('hosting_solr')
+  ->fields(array(
+    'server' => $node->solr_server,
+    'path' => $node->solr_config_path,
+  ))
+  ->condition('nid', $node->nid)
+  ->execute();
 }
 
 /**
  * Function for operation nodeapi delete
  */
 function hosting_solr_delete($node) {
-  db_query("DELETE FROM {hosting_solr} WHERE nid = %d", $node->nid);
+  // TODO Please review the conversion of this statement to the D7 database API syntax.
+  /* db_query("DELETE FROM {hosting_solr} WHERE nid = %d", $node->nid) */
+  db_delete('hosting_solr')
+  ->condition('nid', $node->nid)
+  ->execute();
 }
 
 /**
  * Function for operation nodeapi delete revision
  */
 function hosting_solr_delete_revision($node) {
-  db_query("DELETE FROM {hosting_solr} WHERE vid = %d", $node->vid);
+  // TODO Please review the conversion of this statement to the D7 database API syntax.
+  /* db_query("DELETE FROM {hosting_solr} WHERE vid = %d", $node->vid) */
+  db_delete('hosting_solr')
+  ->condition('vid', $node->vid)
+  ->execute();
 }
 
-/** 
- * Implementation of hook_nodeapi()
+/**
+ * Implements hook_nodeapi().
  */
-function hosting_solr_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+function hosting_solr_nodeapi_OLD(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  // TODO Remaining code in this function needs to be moved to the appropriate new hook function.
   if ($node->type == 'site') {
     switch ($op) {
-    case 'view':
+      case 'view':
         hosting_solr_view($node);
         break;
-    case 'insert':
+      case 'insert':
         hosting_solr_insert($node);
         break;
       case 'update':
         // if there is already an entry, update it. If the solr module has been activate later on and the site
         // has already existing, this special case needs to be tracked.
-        $i = db_result(db_query("SELECT server FROM {hosting_solr} WHERE vid=%d", $node->vid));
+        $i = db_query("SELECT server FROM {hosting_solr} WHERE vid = :vid", array(':vid' => $node->vid))->fetchField();
         if ($i) {
           hosting_solr_insert($node);
         }
@@ -226,17 +254,17 @@ function hosting_solr_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
           hosting_solr_update($node);
         }
         break;
-      case 'delete' :
+      case 'delete':
         hosting_solr_delete($node);
         break;
       case 'delete revision':
         hosting_solr_delete_revision($node);
         break;
-      case 'validate' :
+      case 'validate':
         break;
       case 'load':
-        $additions = db_fetch_array(db_query("SELECT server AS solr_server, path AS solr_config_path FROM {hosting_solr} WHERE vid=%d  ORDER BY solr_server DESC LIMIT 1", $node->vid));
-        
+        $additions = db_fetch_array(db_query("SELECT server AS solr_server, path AS solr_config_path FROM {hosting_solr} WHERE vid = :vid  ORDER BY solr_server DESC LIMIT 1", array(':vid' => $node->vid)));
+
         $server = node_load($additions['solr_server']);
         $additions['solr_war_path'] = $server->solr_war_path;
         return $additions;
@@ -250,7 +278,7 @@ function hosting_solr_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         $data = new stdClass();
         $data->server = $node->nid;
         $data->solr_war_path = $node->services['solr']->solr_war_path;
-        if (db_result(db_query("SELECT server FROM {hosting_solr_server} WHERE server=%d", $node->nid))) {
+        if (db_query("SELECT server FROM {hosting_solr_server} WHERE server = :server", array(':server' => $node->nid))->fetchField()) {
           drupal_write_record('hosting_solr_server', $data, array('server'));
         }
         else {
@@ -258,17 +286,21 @@ function hosting_solr_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         }
         break;
       case 'delete':
-        db_query("DELETE FROM {hosting_solr_server} WHERE server=%d", $node->nid);
+        // TODO Please review the conversion of this statement to the D7 database API syntax.
+        /* db_query("DELETE FROM {hosting_solr_server} WHERE server=%d", $node->nid) */
+        db_delete('hosting_solr_server')
+  ->condition('server', $node->nid)
+  ->execute();
         break;
     }
   }
 }
 
-/** 
- * Implementation of hook_nodeapi()
+/**
+ * Implements hook_nodeapi().
  */
 function hosting_solr_nodeapi_server_load(&$node) {
-  $path = db_result(db_query("SELECT solr_war_path FROM {hosting_solr_server} WHERE server=%d", $node->nid));
+  $path = db_query("SELECT solr_war_path FROM {hosting_solr_server} WHERE server = :server", array(':server' => $node->nid))->fetchField();
   $default_path = variable_get('hosting_solr_default_solr_war_path', '/usr/share/solr-3.6.2.war');
   $path = $path ? $path : $default_path;
   return array('solr_war_path' => $path);

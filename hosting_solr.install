@@ -1,7 +1,17 @@
 <?php
+/**
+ * @file
+ * Install, update and uninstall functions for the hosting_solr module.
+ *
+ */
+
 
 // vim: filetype=php
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function hosting_solr_schema() {
   $schema['hosting_solr'] = array(
     'fields' => array(
@@ -50,28 +60,33 @@ function hosting_solr_schema() {
 }
 
 /**
- * Implementation of hook_install().
+ * Implements hook_install().
  */
 function hosting_solr_install() {
-  drupal_install_schema('hosting_solr');
+  // TODO The drupal_(un)install_schema functions are called automatically in D7.
+  // drupal_install_schema('hosting_solr')
 }
 
 /**
- * Implementation of hook_uninstall().
+ * Implements hook_uninstall().
  */
 function hosting_solr_uninstall() {
-  drupal_uninstall_schema('hosting_solr');
+  // TODO The drupal_(un)install_schema functions are called automatically in D7.
+  // drupal_uninstall_schema('hosting_solr')
 }
 
 /**
- * Implementation of hook_update_N().
+ * Implements hook_update_N().
  */
 function hosting_solr_update_6001() {
   //New field for new functionality. Issue #1864124
 
   $ret = array();
-  db_add_field($ret, 'hosting_solr', 'path', array('type' => 'varchar', 'length' => '255', 'default' => ''));
-  return $ret;
+  db_add_field('hosting_solr', 'path', array('type' => 'varchar', 'length' => '255', 'default' => ''));
+  // hook_update_N() no longer returns a $ret array. Instead, return
+  // nothing or a translated string indicating the update ran successfully.
+  // See http://drupal.org/node/224333#update_sql.
+  return t('TODO Add a descriptive string here to show in the UI.') /* $ret */;
 }
 
 /**
@@ -80,8 +95,8 @@ function hosting_solr_update_6001() {
 function hosting_solr_update_6002() {
   $ret = array();
 
-  if (!db_result(db_query("SHOW TABLES LIKE 'hosting_solr_server'"))) {
-      $schema = array(
+  if (!db_query("SHOW TABLES LIKE 'hosting_solr_server'")->fetchField()) {
+    $schema = array(
       'fields' => array(
         'server' => array(
           'type' => 'int',
@@ -96,8 +111,11 @@ function hosting_solr_update_6002() {
       ),
       'primary key' => array('server'),
     );
-    db_create_table($ret, 'hosting_solr_server', $schema);
+    db_create_table('hosting_solr_server', $schema);
   }
 
-  return $ret;
+  // hook_update_N() no longer returns a $ret array. Instead, return
+  // nothing or a translated string indicating the update ran successfully.
+  // See http://drupal.org/node/224333#update_sql.
+  return t('TODO Add a descriptive string here to show in the UI.') /* $ret */;
 }
